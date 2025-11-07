@@ -1,3 +1,7 @@
+#Global Variables
+balance = 0.0
+transactions =[]
+
 def login():
     User = {
         'umar': 'umar@1234',
@@ -31,15 +35,24 @@ def main_menu():
 ################################################################################################
 def income_menu():
     print("---------------")
+    print("Welcome to the Income Menu")
+    print("---------------")
     print("1. Add Income")
-    print("2. Remove Income")
+    print("2. View Income History")
+    print("3. exit to Main Menu")
     while True:
         income_choice = input("Enter your choice: ")
-        if income_choice not in ('1', '2', '3', '4', '5', 'exit'):
+        if income_choice not in ('1', '2', '3','exit'):
             print("Invalid choice. Please try again.")
         else:
             break
-    return income_choice
+    if income_choice == '1':
+        print("---------------")
+        add_income()
+    elif income_choice == '3':
+        return main_menu()
+    else:
+        print("Invalid choice. Please try again.")
 ################################################################################################
 def expense_menu():
     print("---------------")
@@ -50,6 +63,9 @@ def expense_menu():
             print("Invalid choice. Please try again.")
         else:
             break
+    if expense_choice == '1':
+        print("---------------")
+        add_expense()
     return expense_choice
 ################################################################################################
 def transactions_menu():
@@ -88,18 +104,33 @@ def menu_selector(main_menu_choice):
         print("Thank you for using Financy.")
         exit()
 ##################################################################################################
+def add_income():
+    income = input("Enter your income: ")
+    income = float(income)
+    income_entry = {
+        "type": "income",
+        "amount": income
+    }
+    transactions.append(income_entry)
+    print(f"Your new balance is {balance + income}")
+    return income_menu()
+###################################################################################################
+def add_expense():
+    expense = input("Enter your expense: ")
+    expense_description = input("Enter your expense description: ")
+    expense_category = input("Enter your expense category: ")
+    if expense_category not in ('Food', 'Rent', 'Entertainment', 'Clothing', 'Loan'):
+            print("Invalid choice. Please enter a valid category of expense such as 'Food', 'Rent', 'Entertainment', 'Clothing', 'Loan'.")
+    expense = float(expense)
+    expense_entry = {
+        "Type": "expense",
+        "Amount": expense,
+        "Description": expense_description,
+        "Category": expense_category
+    }
+    transactions.append(expense_entry)
+    print(f"Your new balance is {balance - expense}")
+    return expense_menu()
+####################################################################################################
 main_menu_choice = main_menu()
-
-if main_menu_choice == '1':
-    income_menu()
-elif main_menu_choice == '2':
-    expense_menu()
-elif main_menu_choice == '3':
-    transactions_menu()
-elif main_menu_choice == '4':
-    show_summary_menu()
-elif main_menu_choice == '5':
-    print("Thank you for using Financy.")
-    exit()
-
-
+menu_selector(main_menu_choice)
