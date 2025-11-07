@@ -32,6 +32,7 @@ def main_menu():
 def income_menu():
     print("---------------")
     print("1. Add Income")
+    print("2. Remove Income")
     while True:
         income_choice = input("Enter your choice: ")
         if income_choice not in ('1', '2', '3', '4', '5', 'exit'):
@@ -53,7 +54,8 @@ def expense_menu():
 ################################################################################################
 def transactions_menu():
     print("---------------")
-    print("1. Add Transactions")
+    print("1. Show Income History")
+    print("2. Show Expense History")
     while True:
         transactions_choice = input("Enter your choice: ")
         if transactions_choice not in ('1', '2', '3', '4', '5', 'exit'):
@@ -87,8 +89,17 @@ def menu_selector(main_menu_choice):
         exit()
 ##################################################################################################
 main_menu_choice = main_menu()
-menu_selector(main_menu_choice)
 
-
+if main_menu_choice == '1':
+    income_menu()
+elif main_menu_choice == '2':
+    expense_menu()
+elif main_menu_choice == '3':
+    transactions_menu()
+elif main_menu_choice == '4':
+    show_summary_menu()
+elif main_menu_choice == '5':
+    print("Thank you for using Financy.")
+    exit()
 
 
