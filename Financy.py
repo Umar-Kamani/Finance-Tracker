@@ -1,4 +1,7 @@
 #Global Variables
+from datetime import datetime
+
+
 balance = 0.0
 transactions =[]
 
@@ -31,7 +34,7 @@ def main_menu():
             print("Invalid choice. Please try again.")
         else:
             break
-    return main_menu_choice
+    return menu_selector(main_menu_choice)
 ################################################################################################
 def income_menu():
     print("---------------")
@@ -49,10 +52,12 @@ def income_menu():
     if income_choice == '1':
         print("---------------")
         add_income()
+    elif income_choice == '2':
+        print("---------------")
+        show_income_table()
     elif income_choice == '3':
-        return main_menu()
-    else:
-        print("Invalid choice. Please try again.")
+        print("Returning to Main Menu")
+    return main_menu()
 ################################################################################################
 def expense_menu():
     print("---------------")
@@ -107,9 +112,11 @@ def menu_selector(main_menu_choice):
 def add_income():
     income = input("Enter your income: ")
     income = float(income)
+    income_date = datetime.today()
     income_entry = {
         "type": "income",
-        "amount": income
+        "amount": income,
+        "date": income_date
     }
     transactions.append(income_entry)
     print(f"Your new balance is {balance + income}")
@@ -132,5 +139,12 @@ def add_expense():
     print(f"Your new balance is {balance - expense}")
     return expense_menu()
 ####################################################################################################
+def show_income_table():
+    incomes = []
+    for t in transactions:
+        if t["type"] == "income":
+            incomes.append(t)
+    print(incomes)
+
 main_menu_choice = main_menu()
 menu_selector(main_menu_choice)
