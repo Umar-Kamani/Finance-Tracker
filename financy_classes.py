@@ -15,5 +15,5 @@ class Income(Transactions):
         super().__init__("Income", amount, "Income", description, date)
 
 class Expenses(Transactions):
-    def __init__(self, amount, date, category, description, ttype):
+    def __init__(self, ttype, amount, category, description, date):
         super().__init__("Expense", amount, category, description, date)
