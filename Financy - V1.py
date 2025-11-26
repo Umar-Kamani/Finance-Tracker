@@ -1,7 +1,7 @@
 #Global Variables
-from datetime import date
-from tabulate import tabulate
-import financy_classes
+from datetime import datetime #imports datetime function
+from tabulate import tabulate #imports tabulate function
+import financy_classes #imports classes from another file
 
 
 balance = 0.00  #This is the balance variable for the program, all income and expense will be deducted from here.
@@ -35,7 +35,15 @@ def main_menu(): #This is the main menu of Financy, it is where users can naviga
             print("Invalid choice. Please try again.")
         else:
             break
-    return menu_selector(main_menu_choice)
+    if main_menu_choice == '1':
+        income_menu()
+    elif main_menu_choice == '2':
+        expense_menu()
+    elif main_menu_choice == '3':
+        account_analytics_menu()
+    elif main_menu_choice == '4' or main_menu_choice == 'exit':
+        print("Thank you for using Financy.")
+        exit()
 ################################################################################################
 def income_menu(): # This is the income submenu, it is where all the options regarding income are hosted
     print("---------------")
@@ -55,12 +63,13 @@ def income_menu(): # This is the income submenu, it is where all the options reg
         add_income() #redirects to this function
     elif income_choice == '2':
         print("---------------")
-        show_income_table() #redirects to this function
+        show_income_table(Analytics=False) #This calls the show_income_table function. The parameters are set so that the function returns the user to a different menu.
+        #This enables us to use the same function for different use-cases. Keeping it modular
     elif income_choice == '3' or income_choice == 'exit':
         print("Returning to Main Menu")
-    return main_menu()
+    return main_menu() #When the function ends, it will return the user back to the main menu
 ################################################################################################
-def expense_menu():
+def expense_menu(): #This is the expense menu, it is where all options regarding expenses are hosted
     print("---------------")
     print("Welcome to the Expense Menu")
     print("---------------")
@@ -78,12 +87,13 @@ def expense_menu():
         add_expense()
     elif expense_choice == '2':
         print("---------------")
-        show_expense_table()
+        show_expense_table(AnalyticsExpense=False) #This calls the show_expense_table function. The parameters are set so that the function returns the user to a different menu.
+        #This enables us to use the same function for different use-cases. Keeping it modular
     elif expense_choice == '3' or expense_choice == 'exit':
         print("Returning to Main Menu")
-    return main_menu()
+    return main_menu() #When the function ends, it will return the user back to the main menu
 ################################################################################################
-def account_analytics_menu():
+def account_analytics_menu(): #This is the Account Analytics Menu, its where all the account analytics are hosted
     global balance
     print("---------------")
     print("Welcome to the Account Analytics Menu")
@@ -102,17 +112,19 @@ def account_analytics_menu():
             break
     if account_analytics_choice == '1':
         print("---------------")
-        show_income_table(Analytics=True)
+        show_income_table(Analytics=True) #This calls the show_income_table function. The parameters are set so that the function returns the user to a different menu.
+        #This enables us to use the same function for different use-cases. Keeping it modular
     elif account_analytics_choice == '2':
         print("---------------")
-        show_expense_table()
+        show_expense_table(AnalyticsExpense=True) #This calls the show_expense_table function. The parameters are set so that the function returns the user to a different menu.
+        #This enables us to use the same function for different use-cases. Keeping it modular
     elif account_analytics_choice == '3':
         print("---------------")
         print(f"Your current balance: ${balance}")
 
     elif account_analytics_choice == '4':
         print("---------------")
-        per_category_spending_history("Food")
+        per_category_spending_history("Food") #Calls the per_category_spending_history function. The parameter calls for a specific category
         per_category_spending_history("Rent")
         per_category_spending_history("Entertainment")
         per_category_spending_history("Clothing")
@@ -121,72 +133,82 @@ def account_analytics_menu():
     elif account_analytics_choice == '5' or account_analytics_choice == 'exit':
         print("Returning to Main Menu.")
     return main_menu()
-################################################################################################
-def menu_selector(main_menu_choice):
-    if main_menu_choice == '1':
-        income_menu()
-    elif main_menu_choice == '2':
-        expense_menu()
-    elif main_menu_choice == '3':
-        account_analytics_menu()
-    elif main_menu_choice == '4' or main_menu_choice == 'exit':
-        print("Thank you for using Financy.")
-        exit()
 ##################################################################################################
 def add_income():
     global balance
     print(f"Current balance: ${balance}")
-    while True:
+    while True: #This loops make sure the user enters a valid input
         income_amount = input("Enter your income ($): ")
         try:
-            income_amount = float(income_amount)
-            if income_amount <= 0:
-                print("Invalid income. Please try again. Please enter only numbers.")
+            income_amount = float(income_amount) #If the input cannot be made into a float it will reprompt the user for an input
+            if income_amount <= 0: #This checks for negative inputs, and if the user enters a negative valid, they will be prompted to enter another valid
+                print("Invalid income. Please try again. Please enter only positive numbers.")
             else:
                 break
         except ValueError:
             print("Invalid income. Please try again. Please enter only numbers.")
-    income_date = date.today().strftime("%d-%m-%Y")
-    income_description = input("Enter your income description: ")
-    new_income = financy_classes.Income("Income", income_amount,"Income", income_description, income_date)
-    balance += income_amount
+    while True:
+        income_date = input("Enter the date of your income (DD/MM/YYYY), leave blank for today's date: ").strip() #This part enables the user to choose to enter a date for the transaction or lets the system autofill the current date. This aims at making the user experience more seemless
+        if income_date == "":
+            income_date = datetime.today().strftime("%d/%m/%Y")
+            print(f"Using today's date: {income_date}")
+            break
+        try:
+            datetime.strptime(income_date, "%d/%m/%Y")
+            break
+        except ValueError:
+            print("Invalid date. Please try again (DD/MM/YYYY).")
+    income_description = input("Enter your income description: ") #This prompts the user to enter a description for the income
+    new_income = financy_classes.Income("Income", income_amount,"Income", income_description, income_date) # Here we are creating an object for that will contain this income entry. This will automcatically be appended to the transactions_registry in the Transactions class. Refer to the Transactions class for more details
+    #Since the type and category are by default income, they have been pre-defined for better user experience
+    balance += income_amount #This function adds the income to the balance
     print(f"Your new balance is ${balance}")
-    return income_menu()
+    return income_menu() #Once the income is recorded it, the function redirects the user to the income menu
 ###################################################################################################
 def add_expense():
     global balance
-    valid_expenses = ['Food', 'Rent', 'Entertainment', 'Clothing', 'Loan', 'Other']
+    valid_expenses = ['Food', 'Rent', 'Entertainment', 'Clothing', 'Loan', 'Other'] #This list contains a number of valid expense categories that we have pre-defined for convenience.
     print(f"Current balance: ${balance}")
-    while True:
+    while True: #Looks checks for correct user input - similar loop to the one used for income
         expense_amount = input("Enter your expense ($): ")
         try:
             expense_amount = float(expense_amount)
             if expense_amount <= 0:
-                print("Invalid expense. Please try again. Please enter only numbers.")
+                print("Invalid expense. Please try again. Please enter only positive numbers.")
             else:
                 break
         except ValueError:
             print("Invalid expense. Please try again. Please enter only numbers.")
-
-    expense_date = date.today().strftime("%d-%m-%Y")
-    expense_description = input("Enter your expense description: ")
+    while True: #This part enables the user to choose to enter a date for the transaction or lets the system autofill the current date. This aims at making the user experience more seemless
+        expense_date = input("Enter the date of your income (DD/MM/YYYY), leave blank for today's date: ").strip()
+        if expense_date == "":
+            income_date = datetime.today().strftime("%d/%m/%Y")
+            print(f"Using today's date: {expense_date}")
+            break
+        try:
+            datetime.strptime(expense_date, "%d/%m/%Y") #This checks for date format
+            break
+        except ValueError:
+            print("Invalid date. Please try again (DD/MM/YYYY).")
+    expense_description = input("Enter your expense description: ") # prompts the user to add a description to the expense
 
     while True:
-        expense_category = input("Enter your expense category: ").capitalize()
+        print("Enter a category from the following: Food, Rent, Entertainment, Clothing, Loan and Other")
+        expense_category = input("Enter your expense category: ").capitalize() #Capitalize is to make sure the input is as intended for us to verify with the list
         if expense_category not in valid_expenses:
-            print("Invalid choice. Please enter a valid category such as Food, Rent, Entertainment, Clothing, Loan and Other")
+            print("Invalid choice. Please enter a valid category such as Food, Rent, Entertainment, Clothing, Loan and Other") # validates the input with the valid categories
         else:
             break
 
-    new_expense = financy_classes.Expenses("Expenses", expense_amount,expense_category, expense_description, expense_date)
+    new_expense = financy_classes.Expenses("Expenses", expense_amount,expense_category, expense_description, expense_date) # Here we are creating an object for that will contain this expense entry. This will automcatically be appended to the transactions_registry in the Transactions class. Refer to the Transactions class for more details
     balance -= expense_amount
     print(f"Your new balance is ${balance}")
     return expense_menu()
 ####################################################################################################
 def show_income_table(Analytics):
-    incomes = [t for t in financy_classes.Transactions.transactions_registry if t.ttype == "Income"]
+    incomes = [t for t in financy_classes.Transactions.transactions_registry if t.ttype == "Income"] #This list comprehension enables us to filter the Transactions_registry for Income
     income_table = []
-    for t in incomes:
+    for t in incomes: # We store the transactions into the income_table list as a dictionary so that we can display it properly using the tabulate function
         income_table.append({
             "Type": "Income",
             "Amount ($)": t.amount,
@@ -194,18 +216,18 @@ def show_income_table(Analytics):
             "Description": t.description,
             "Date": t.date
         })
-    sum_of_income = sum(t.amount for t in incomes)
-    income_table.append({
+    sum_of_income = sum(t.amount for t in incomes) #This calculates the total sum of all income recorded and filtered into the incomes list
+    income_table.append({ #Here we append it to the income_table so that it has a row of its own. This makes it so that this record is only displayed once and not on each row on the last column.
         "Sum of Income ($)": sum_of_income,
     })
     print(tabulate(income_table, headers="keys", tablefmt="fancy_grid"))
 
-    if Analytics:
+    if Analytics: #This statement makes the function more modular and enables us to use it in the Income Menu and Account Analytics Menu
         return account_analytics_menu()
     else:
         return income_menu()
 #####################################################################################################
-def show_expense_table(Analytics):
+def show_expense_table(AnalyticsExpense): #This is a replica of the above function, please refer to it for comments on the logic of each statement.
     expenses = [t for t in financy_classes.Transactions.transactions_registry if t.ttype == "Expense"]
     expense_table = []
     for t in expenses:
@@ -221,15 +243,15 @@ def show_expense_table(Analytics):
         "Sum of Expenses ($)": sum_of_expenses,
     })
     print(tabulate(expense_table, headers="keys", tablefmt="fancy_grid"))
-    if Analytics:
+    if AnalyticsExpense:
         return account_analytics_menu()
     else:
         return expense_menu()
 ####################################################################################################
-def per_category_spending_history(category):
-    sp_category =[t for t in financy_classes.Transactions.transactions_registry if t.category == category]
+def per_category_spending_history(category): #This module enables us to display transactions from each category Separately.
+    sp_category =[t for t in financy_classes.Transactions.transactions_registry if t.category == category] #This list comprehension filters the transactions registry for transactions of a specific category as stated in the function parameters.
 
-    sp_category_history = []
+    sp_category_history = [] # This list stores a dictionary that enables the tabulate function to display everything properly.
     for t in sp_category:
         sp_category_history.append({
             "Type": t.ttype,
@@ -254,6 +276,6 @@ $$ |      $$ |$$ |  $$ |\$$$$$$$ |$$ |  $$ |\$$$$$$$\ \$$$$$$$ |
 \__|      \__|\__|  \__| \_______|\__|  \__| \_______| \____$$ |
                                                       $$\   $$ |
                                                       \$$$$$$  |
-                                                       \______/ """)
-login()
-main_menu()
+                                                       \______/ """) #This is just a fun thing i tried, thought it would be coool
+login() # Call the login function
+main_menu() #Call the main menu function, thanks to the return functions, the user can gracefully navigate through the program. This greatly reduces the lines of code needed.

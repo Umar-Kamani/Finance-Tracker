@@ -1,4 +1,3 @@
-from datetime import date
 
 class Transactions:
     transactions_registry = []
@@ -8,7 +7,7 @@ class Transactions:
         self.category = category
         self.description = description
         self.date = date
-        Transactions.transactions_registry.append(self)
+        Transactions.transactions_registry.append(self) #This appends any object that belongs to the Transactions class to the transactions_registry list
 
 class Income(Transactions):
     def __init__(self, ttype, amount, category, description, date):
