@@ -1,7 +1,9 @@
 
 class Transactions:
     transactions_registry = []
+    transactions_id = 0
     def __init__(self, ttype, amount, category, description, date):
+        self.transactions_id = Transactions.transactions_id + 1
         self.ttype = ttype
         self.amount = float(amount)
         self.category = category
