@@ -109,6 +109,7 @@ def account_analytics_menu():
     elif account_analytics_choice == '3':
         print("---------------")
         print(f"Your current balance: ${balance}")
+
     elif account_analytics_choice == '4':
         print("---------------")
         per_category_spending_history("Food")
@@ -193,6 +194,10 @@ def show_income_table(Analytics):
             "Description": t.description,
             "Date": t.date
         })
+    sum_of_income = sum(t.amount for t in incomes)
+    income_table.append({
+        "Sum of Income ($)": sum_of_income,
+    })
     print(tabulate(income_table, headers="keys", tablefmt="fancy_grid"))
 
     if Analytics:
@@ -211,6 +216,10 @@ def show_expense_table(Analytics):
             "Description": t.description,
             "Date": t.date
         })
+    sum_of_expenses = sum(t.amount for t in expenses)
+    expense_table.append({
+        "Sum of Expenses ($)": sum_of_expenses,
+    })
     print(tabulate(expense_table, headers="keys", tablefmt="fancy_grid"))
     if Analytics:
         return account_analytics_menu()
@@ -234,6 +243,17 @@ def per_category_spending_history(category):
     print(tabulate(sp_category_history, headers="keys", tablefmt="fancy_grid"))
 ###################################################################################################
 
-
+print(r""" 
+$$$$$$$$\ $$\                                                   
+$$  _____|\__|                                                  
+$$ |      $$\ $$$$$$$\   $$$$$$\  $$$$$$$\   $$$$$$$\ $$\   $$\ 
+$$$$$\    $$ |$$  __$$\  \____$$\ $$  __$$\ $$  _____|$$ |  $$ |
+$$  __|   $$ |$$ |  $$ | $$$$$$$ |$$ |  $$ |$$ /      $$ |  $$ |
+$$ |      $$ |$$ |  $$ |$$  __$$ |$$ |  $$ |$$ |      $$ |  $$ |
+$$ |      $$ |$$ |  $$ |\$$$$$$$ |$$ |  $$ |\$$$$$$$\ \$$$$$$$ |
+\__|      \__|\__|  \__| \_______|\__|  \__| \_______| \____$$ |
+                                                      $$\   $$ |
+                                                      \$$$$$$  |
+                                                       \______/ """)
 login()
 main_menu()
