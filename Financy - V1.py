@@ -28,10 +28,11 @@ def main_menu(): #This is the main menu of Financy, it is where users can naviga
     print("1. Income")
     print("2. Expense")
     print("3. Account Analytics")
-    print("4. Exit")
+    print("4. Delete Transactions")
+    print("5. Exit")
     while True: #This loop checks for correct user choice input
         main_menu_choice = input("Enter your choice: ")
-        if main_menu_choice not in ('1', '2', '3', '4', 'exit'):
+        if main_menu_choice not in ('1', '2', '3', '4', '5', 'exit'):
             print("Invalid choice. Please try again.")
         else:
             break
@@ -41,7 +42,9 @@ def main_menu(): #This is the main menu of Financy, it is where users can naviga
         expense_menu()
     elif main_menu_choice == '3':
         account_analytics_menu()
-    elif main_menu_choice == '4' or main_menu_choice == 'exit':
+    elif main_menu_choice == '4':
+        remove_transactions_menu()
+    elif main_menu_choice == '5' or main_menu_choice == 'exit':
         print("Thank you for using Financy.")
         exit()
 ################################################################################################
@@ -210,6 +213,7 @@ def show_income_table(Analytics):
     income_table = []
     for t in incomes: # We store the transactions into the income_table list as a dictionary so that we can display it properly using the tabulate function
         income_table.append({
+            "ID": t.id,
             "Type": "Income",
             "Amount ($)": t.amount,
             "Category": "Income",
@@ -232,6 +236,7 @@ def show_expense_table(AnalyticsExpense): #This is a replica of the above functi
     expense_table = []
     for t in expenses:
         expense_table.append({
+            "ID": t.id,
             "Type": "Expense",
             "Amount ($)": t.amount,
             "Category": t.category,
@@ -254,6 +259,7 @@ def per_category_spending_history(category): #This module enables us to display 
     sp_category_history = [] # This list stores a dictionary that enables the tabulate function to display everything properly.
     for t in sp_category:
         sp_category_history.append({
+            "ID": t.id,
             "Type": t.ttype,
             "Amount ($)": t.amount,
             "Category": t.category,
@@ -264,7 +270,6 @@ def per_category_spending_history(category): #This module enables us to display 
     print("____________________________________________________________________")
     print(tabulate(sp_category_history, headers="keys", tablefmt="fancy_grid"))
 ###################################################################################################
-
 print(r""" 
 $$$$$$$$\ $$\                                                   
 $$  _____|\__|                                                  
@@ -277,5 +282,67 @@ $$ |      $$ |$$ |  $$ |\$$$$$$$ |$$ |  $$ |\$$$$$$$\ \$$$$$$$ |
                                                       $$\   $$ |
                                                       \$$$$$$  |
                                                        \______/ """) #This is just a fun thing i tried, thought it would be coool
-login() # Call the login function
+####################################################################################################
+def remove_transactions_menu():
+    all_transactions_filter = [t for t in financy_classes.Transactions.transactions_registry]
+    all_transactions = []
+    for t in all_transactions_filter:
+        all_transactions.append({
+            "ID": t.id,
+            "Type": t.ttype,
+            "Amount ($)": t.amount,
+            "Category": t.category,
+            "Description": t.description,
+            "Date": t.date
+    })
+    print("Transactions")
+    print("____________________________________________________________________")
+    print(tabulate(all_transactions, headers="keys", tablefmt="fancy_grid"))
+    print("____________________________________________________________________")
+    print("1. Delete Transactions")
+    print("2. Exit")
+    while True: #This loop checks for correct user choice input
+        remove_transactions_choice = input("Enter your choice: ")
+        if remove_transactions_choice not in ('1', '2', 'exit'):
+            print("Invalid choice. Please try again.")
+        else:
+            break
+
+    if remove_transactions_choice == '1':
+        remove_transaction()
+    elif remove_transactions_choice == '2':
+        return main_menu()
+####################################################################################################
+def remove_transaction():
+    while True:
+        delete_id = input("Enter the transaction ID of the transaction to be deleted: ")
+        try:
+            delete_id = int(delete_id)
+            break
+        except ValueError:
+            print("Invalid ID. Please try again.")
+    transaction_found = False
+    for t in financy_classes.Transactions.transactions_registry:
+        if t.id == delete_id:
+            financy_classes.Transactions.transactions_registry.remove(t)
+            print("Transaction Deleted")
+            transaction_found = True
+            new_all_transactions_filter = [t for t in financy_classes.Transactions.transactions_registry]
+            new_all_transactions = []
+            for t in new_all_transactions_filter:
+                new_all_transactions.append({
+                    "ID": t.id,
+                    "Type": t.ttype,
+                    "Amount ($)": t.amount,
+                    "Category": t.category,
+                    "Description": t.description,
+                    "Date": t.date
+                })
+            print(tabulate(new_all_transactions, headers="keys", tablefmt="fancy_grid"))
+            break
+    if not transaction_found:
+        print("Transaction not found.")
+    return remove_transactions_menu()
+######################################################################################################
+#login() # Call the login function
 main_menu() #Call the main menu function, thanks to the return functions, the user can gracefully navigate through the program. This greatly reduces the lines of code needed.
