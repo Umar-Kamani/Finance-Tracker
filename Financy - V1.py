@@ -22,7 +22,6 @@ def login(): #This function is used for simple user authentication
             print("Username or password is incorrect")
 ################################################################################################
 def main_menu(): #This is the main menu of Financy, it is where users can navigate to the different pages and sub-menus
-    print("Thank you for using Financy.")
     print("---Main Menu---")
     print(f"Current balance: ${balance}") #Displays the balance at any given moment or time
     print("1. Income")
@@ -269,21 +268,8 @@ def per_category_spending_history(category): #This module enables us to display 
     print(f"Please find your spending history for {category} below.")
     print("____________________________________________________________________")
     print(tabulate(sp_category_history, headers="keys", tablefmt="fancy_grid"))
-###################################################################################################
-print(r""" 
-$$$$$$$$\ $$\                                                   
-$$  _____|\__|                                                  
-$$ |      $$\ $$$$$$$\   $$$$$$\  $$$$$$$\   $$$$$$$\ $$\   $$\ 
-$$$$$\    $$ |$$  __$$\  \____$$\ $$  __$$\ $$  _____|$$ |  $$ |
-$$  __|   $$ |$$ |  $$ | $$$$$$$ |$$ |  $$ |$$ /      $$ |  $$ |
-$$ |      $$ |$$ |  $$ |$$  __$$ |$$ |  $$ |$$ |      $$ |  $$ |
-$$ |      $$ |$$ |  $$ |\$$$$$$$ |$$ |  $$ |\$$$$$$$\ \$$$$$$$ |
-\__|      \__|\__|  \__| \_______|\__|  \__| \_______| \____$$ |
-                                                      $$\   $$ |
-                                                      \$$$$$$  |
-                                                       \______/ """) #This is just a fun thing i tried, thought it would be coool
-####################################################################################################
-def remove_transactions_menu():
+############################################################## ######################################
+def remove_transactions_menu(): #This section enables users to delete certain transactions
     all_transactions_filter = [t for t in financy_classes.Transactions.transactions_registry]
     all_transactions = []
     for t in all_transactions_filter:
@@ -295,7 +281,8 @@ def remove_transactions_menu():
             "Description": t.description,
             "Date": t.date
     })
-    print("Transactions")
+#The above lines of code is used to create a dictionary out of all the transactions in registry to be displayed below
+    print("Welcome to the transactions Deleting Tool!")
     print("____________________________________________________________________")
     print(tabulate(all_transactions, headers="keys", tablefmt="fancy_grid"))
     print("____________________________________________________________________")
@@ -313,21 +300,21 @@ def remove_transactions_menu():
     elif remove_transactions_choice == '2':
         return main_menu()
 ####################################################################################################
-def remove_transaction():
-    while True:
+def remove_transaction(): #This module does the actual deleting on transactions
+    while True: # This loop is the verify for the correct transaction ID
         delete_id = input("Enter the transaction ID of the transaction to be deleted: ")
         try:
             delete_id = int(delete_id)
             break
         except ValueError:
             print("Invalid ID. Please try again.")
-    transaction_found = False
-    for t in financy_classes.Transactions.transactions_registry:
+    transaction_found = False #This is a marker to understand if we were able to find the transaction or not
+    for t in financy_classes.Transactions.transactions_registry: #Filtering the transactions registry
         if t.id == delete_id:
             financy_classes.Transactions.transactions_registry.remove(t)
             print("Transaction Deleted")
-            transaction_found = True
-            new_all_transactions_filter = [t for t in financy_classes.Transactions.transactions_registry]
+            transaction_found = True #Since we were able to delete the transaction, this marker becomes true
+            new_all_transactions_filter = [t for t in financy_classes.Transactions.transactions_registry] #creating a new list + dictionary for displaying using tabulate
             new_all_transactions = []
             for t in new_all_transactions_filter:
                 new_all_transactions.append({
@@ -338,11 +325,23 @@ def remove_transaction():
                     "Description": t.description,
                     "Date": t.date
                 })
-            print(tabulate(new_all_transactions, headers="keys", tablefmt="fancy_grid"))
+            print(tabulate(new_all_transactions, headers="keys", tablefmt="fancy_grid")) # We display the transaction list again
             break
-    if not transaction_found:
+    if not transaction_found: #Here we check if we were able to delete the transaction, if not then we print that it wasn't found.
         print("Transaction not found.")
     return remove_transactions_menu()
 ######################################################################################################
 #login() # Call the login function
+print(r""" 
+$$$$$$$$\ $$\                                                   
+$$  _____|\__|                                                  
+$$ |      $$\ $$$$$$$\   $$$$$$\  $$$$$$$\   $$$$$$$\ $$\   $$\ 
+$$$$$\    $$ |$$  __$$\  \____$$\ $$  __$$\ $$  _____|$$ |  $$ |
+$$  __|   $$ |$$ |  $$ | $$$$$$$ |$$ |  $$ |$$ /      $$ |  $$ |
+$$ |      $$ |$$ |  $$ |$$  __$$ |$$ |  $$ |$$ |      $$ |  $$ |
+$$ |      $$ |$$ |  $$ |\$$$$$$$ |$$ |  $$ |\$$$$$$$\ \$$$$$$$ |
+\__|      \__|\__|  \__| \_______|\__|  \__| \_______| \____$$ |
+                                                      $$\   $$ |
+                                                      \$$$$$$  |
+                                                       \______/ """) #This is just a fun thing i tried, thought it would be coool
 main_menu() #Call the main menu function, thanks to the return functions, the user can gracefully navigate through the program. This greatly reduces the lines of code needed.
