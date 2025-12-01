@@ -9,6 +9,7 @@ balance = 0.00  #This is the balance variable for the program, all income and ex
 def add_income():
     global balance
     print(f"Current balance: ${balance}")
+
     while True:
         income_amount = input("Enter your income ($): ")
         try:
@@ -107,7 +108,7 @@ def per_category_spending_history(category):
     print(f"Please find your spending history for {category} below.")
     print("____________________________________________________________________")
     print(tabulate(sp_category_history, headers="keys", tablefmt="fancy_grid"))
-add_income()
+#add_income()
 
 #per_category_spending_history("Food")
 print(r""" ________  __                                                   
@@ -122,3 +123,11 @@ print(r""" ________  __
                                                       |  \__| $$
                                                        \$$    $$
                                                         \$$$$$$""")
+print(f"""---Main Menu---
+Current balance: ${balance}
+1. Income
+2. Expense
+3. Account Analytics
+4. Delete Transactions
+5. Exit
+""")
