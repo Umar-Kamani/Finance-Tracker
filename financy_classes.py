@@ -1,6 +1,7 @@
 
 class Transactions:
     transactions_registry = []
+    balance = 0.0
     transactions_id = 0
     def __init__(self, ttype, amount, category, description, date):
         Transactions.transactions_id += 1
