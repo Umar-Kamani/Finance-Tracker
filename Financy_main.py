@@ -4,8 +4,6 @@ from tabulate import tabulate #imports tabulate function
 import financy_classes #imports classes from another file
 
 
-balance = 0.00  #This is the balance variable for the program, all income and expense will be deducted from here.
-
 def login(): #This function is used for simple user authentication
     user = { #This dictionary stores the lists of users that are allowed to log into the Financy System
         'umar': 'umar@1234',
@@ -23,7 +21,7 @@ def login(): #This function is used for simple user authentication
 ################################################################################################
 def main_menu(): #This is the main menu of Financy, it is where users can navigate to the different pages and sub-menus
     print("---Main Menu---")
-    print(f"Current balance: ${balance}") #Displays the balance at any given moment or time
+    print(f"Current balance: ${financy_classes.Transactions.balance}") #Displays the balance at any given moment or time
     print("1. Income")
     print("2. Expense")
     print("3. Account Analytics")
@@ -96,11 +94,10 @@ def expense_menu(): #This is the expense menu, it is where all options regarding
     return main_menu() #When the function ends, it will return the user back to the main menu
 ################################################################################################
 def account_analytics_menu(): #This is the Account Analytics Menu, its where all the account analytics are hosted
-    global balance
     print("---------------")
     print("Welcome to the Account Analytics Menu")
     print("---------------")
-    print(f"Current balance: ${balance}")
+    print(f"Current balance: ${financy_classes.Transactions.balance}")
     print("1. View Total Income History")
     print("2. View Total Expense History")
     print("3. View Account Balance")
@@ -122,7 +119,7 @@ def account_analytics_menu(): #This is the Account Analytics Menu, its where all
         #This enables us to use the same function for different use-cases. Keeping it modular
     elif account_analytics_choice == '3':
         print("---------------")
-        print(f"Your current balance: ${balance}")
+        print(f"Your current balance: ${financy_classes.Transactions.balance}")
 
     elif account_analytics_choice == '4':
         print("---------------")
@@ -137,8 +134,7 @@ def account_analytics_menu(): #This is the Account Analytics Menu, its where all
     return main_menu()
 ##################################################################################################
 def add_income():
-    global balance
-    print(f"Current balance: ${balance}")
+    print(f"Current balance: ${financy_classes.Transactions.balance}")
     while True: #This loops make sure the user enters a valid input
         income_amount = input("Enter your income ($): ")
         try:
@@ -163,14 +159,13 @@ def add_income():
     income_description = input("Enter your income description: ") #This prompts the user to enter a description for the income
     new_income = financy_classes.Income("Income", income_amount,"Income", income_description, income_date) # Here we are creating an object for that will contain this income entry. This will automcatically be appended to the transactions_registry in the Transactions class. Refer to the Transactions class for more details
     #Since the type and category are by default income, they have been pre-defined for better user experience
-    balance += income_amount #This function adds the income to the balance
-    print(f"Your new balance is ${balance}")
+    financy_classes.Transactions.balance += income_amount #This function adds the income to the balance
+    print(f"Your new balance is ${financy_classes.Transactions.balance}")
     return income_menu() #Once the income is recorded it, the function redirects the user to the income menu
 ###################################################################################################
 def add_expense():
-    global balance
     valid_expenses = ['Food', 'Rent', 'Entertainment', 'Clothing', 'Loan', 'Other'] #This list contains a number of valid expense categories that we have pre-defined for convenience.
-    print(f"Current balance: ${balance}")
+    print(f"Current balance: ${financy_classes.Transactions.balance}")
     while True: #Looks checks for correct user input - similar loop to the one used for income
         expense_amount = input("Enter your expense ($): ")
         try:
@@ -203,8 +198,8 @@ def add_expense():
             break
 
     new_expense = financy_classes.Expenses("Expenses", expense_amount,expense_category, expense_description, expense_date) # Here we are creating an object for that will contain this expense entry. This will automcatically be appended to the transactions_registry in the Transactions class. Refer to the Transactions class for more details
-    balance -= expense_amount
-    print(f"Your new balance is ${balance}")
+    financy_classes.Transactions.balance -= expense_amount
+    print(f"Your new balance is ${financy_classes.Transactions.balance}")
     return expense_menu()
 ####################################################################################################
 def show_income_table(Analytics):
@@ -223,7 +218,12 @@ def show_income_table(Analytics):
     income_table.append({ #Here we append it to the income_table so that it has a row of its own. This makes it so that this record is only displayed once and not on each row on the last column.
         "Sum of Income ($)": sum_of_income,
     })
-    print(tabulate(income_table, headers="keys", tablefmt="fancy_grid"))
+
+    if not incomes:
+        print("No transactions were found.")
+        return income_menu()
+    else:
+        print(tabulate(income_table, headers="keys", tablefmt="fancy_grid"))
 
     if Analytics: #This statement makes the function more modular and enables us to use it in the Income Menu and Account Analytics Menu
         return account_analytics_menu()
@@ -246,7 +246,13 @@ def show_expense_table(AnalyticsExpense): #This is a replica of the above functi
     expense_table.append({
         "Sum of Expenses ($)": sum_of_expenses,
     })
-    print(tabulate(expense_table, headers="keys", tablefmt="fancy_grid"))
+
+    if not expense_table:
+        print("No transactions were found.")
+        return expense_menu()
+    else:
+        print(tabulate(expense_table, headers="keys", tablefmt="fancy_grid"))
+
     if AnalyticsExpense:
         return account_analytics_menu()
     else:
@@ -265,9 +271,12 @@ def per_category_spending_history(category): #This module enables us to display 
             "Description": t.description,
             "Date": t.date
         })
-    print(f"Please find your spending history for {category} below.")
-    print("____________________________________________________________________")
-    print(tabulate(sp_category_history, headers="keys", tablefmt="fancy_grid"))
+    if sp_category_history == []:
+        print(f"No transactions found for category: {category}.")
+    else:
+        print(f"Please find your spending history for {category} below.")
+        print("____________________________________________________________________")
+        print(tabulate(sp_category_history, headers="keys", tablefmt="fancy_grid"))
 ############################################################## ######################################
 def remove_transactions_menu(): #This section enables users to delete certain transactions
     all_transactions_filter = [t for t in financy_classes.Transactions.transactions_registry]
@@ -282,23 +291,30 @@ def remove_transactions_menu(): #This section enables users to delete certain tr
             "Date": t.date
     })
 #The above lines of code is used to create a dictionary out of all the transactions in registry to be displayed below
-    print("Welcome to the transactions Deleting Tool!")
-    print("____________________________________________________________________")
-    print(tabulate(all_transactions, headers="keys", tablefmt="fancy_grid"))
-    print("____________________________________________________________________")
-    print("1. Delete Transactions")
-    print("2. Exit")
-    while True: #This loop checks for correct user choice input
-        remove_transactions_choice = input("Enter your choice: ")
-        if remove_transactions_choice not in ('1', '2', 'exit'):
-            print("Invalid choice. Please try again.")
-        else:
-            break
-
-    if remove_transactions_choice == '1':
-        remove_transaction()
-    elif remove_transactions_choice == '2':
+    if all_transactions == []:
+        print("____________________________________________________________________")
+        print("No transactions to delete.")
+        print("Returning to Main Menu.")
+        print("____________________________________________________________________")
         return main_menu()
+    else:
+        print("Welcome to the transactions Deleting Tool!")
+        print("____________________________________________________________________")
+        print(tabulate(all_transactions, headers="keys", tablefmt="fancy_grid"))
+        print("____________________________________________________________________")
+        print("1. Delete Transactions")
+        print("2. Exit")
+        while True: #This loop checks for correct user choice input
+            remove_transactions_choice = input("Enter your choice: ")
+            if remove_transactions_choice not in ('1', '2', 'exit'):
+                print("Invalid choice. Please try again.")
+            else:
+                break
+
+        if remove_transactions_choice == '1':
+            remove_transaction()
+        elif remove_transactions_choice == '2':
+            return main_menu()
 ####################################################################################################
 def remove_transaction(): #This module does the actual deleting on transactions
     while True: # This loop is the verify for the correct transaction ID
@@ -314,6 +330,10 @@ def remove_transaction(): #This module does the actual deleting on transactions
             financy_classes.Transactions.transactions_registry.remove(t)
             print("Transaction Deleted")
             transaction_found = True #Since we were able to delete the transaction, this marker becomes true
+            if t.ttype == "Income":
+                financy_classes.Transactions.balance -= t.amount
+            else:
+                financy_classes.Transactions.balance += t.amount
             new_all_transactions_filter = [t for t in financy_classes.Transactions.transactions_registry] #creating a new list + dictionary for displaying using tabulate
             new_all_transactions = []
             for t in new_all_transactions_filter:
