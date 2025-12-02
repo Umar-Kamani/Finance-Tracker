@@ -183,8 +183,8 @@ def add_expense():
             print("Invalid expense. Please try again. Please enter only numbers.")
     while True: #This part enables the user to choose to enter a date for the transaction or lets the system autofill the current date. This aims at making the user experience more seemless
         expense_date = input("Enter the date of your income (DD/MM/YYYY), leave blank for today's date: ").strip()
-        if expense_date == "":
-            income_date = datetime.today().strftime("%d/%m/%Y")
+        if expense_date == "".strip():
+            expense_date = datetime.today().strftime("%d/%m/%Y")
             print(f"Using today's date: {expense_date}")
             break
         try:
