@@ -121,3 +121,4 @@ ________________________________________________________________________________
     ╘══════╧═════════╧══════════════╧════════════╧═══════════════╧════════════╛
 
 Transaction Template: https://docs.google.com/spreadsheets/d/1LqgGMy3tda0DMest_UzK4dnLFOs8CyrH2mGTa5pHzOE/edit?gid=0#gid=0 
+Reflection : https://docs.google.com/document/d/1DD4A-7BfqINmYG1KZYNTcqLYOmnlcy9ns2-k875fc8E/edit?usp=sharing
